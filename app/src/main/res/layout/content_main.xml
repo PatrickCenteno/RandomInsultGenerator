@@ -13,4 +13,37 @@
     tools:showIn="@layout/activity_main">
 
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/name_edit_text"
+        android:layout_marginTop="95dp"
+        android:hint="Enter your name"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Generate!"
+        android:id="@+id/generate"
+        android:padding="15dp"
+        android:background="@drawable/ripple"
+        android:layout_below="@+id/name_edit_text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/editText"
+        android:layout_below="@+id/generate"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="47dp" />
+
 </RelativeLayout>

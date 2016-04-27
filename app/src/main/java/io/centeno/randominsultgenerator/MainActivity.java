@@ -11,10 +11,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
     Snackbar snackbar;
+    EditText nameText;
+    TextView generate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,8 +32,8 @@ public class MainActivity extends AppCompatActivity {
         }else {
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
-
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            nameText = (EditText) findViewById(R.id.name_edit_text);
+            generate = (TextView) findViewById(R.id.generate);
         }
 
     }
