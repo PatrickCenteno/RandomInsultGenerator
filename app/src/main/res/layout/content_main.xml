@@ -28,22 +28,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:clickable="true"
         android:text="Generate!"
         android:id="@+id/generate"
         android:padding="15dp"
-        android:background="@drawable/ripple"
-        android:layout_below="@+id/name_edit_text"
+        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp" />
+        android:background="?attr/selectableItemBackground"/>
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
+        android:inputType="textPersonName"
         android:ems="10"
-        android:id="@+id/editText"
-        android:layout_below="@+id/generate"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="47dp" />
+        android:id="@+id/insultee"
+        android:layout_above="@+id/generate"
+        android:layout_alignStart="@+id/name_edit_text"
+        android:layout_marginBottom="47dp"
+        android:hint="Person you&apos;re Insulting" />
 
 </RelativeLayout>
