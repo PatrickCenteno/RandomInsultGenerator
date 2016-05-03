@@ -1,6 +1,7 @@
 package io.centeno.randominsultgenerator;
 
 import android.app.DialogFragment;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -17,25 +18,38 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONObject;
+
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "MainActivity";
+    private String [] withName;
+    private String [] withNoName;
 
     Snackbar snackbar;
     EditText nameText;
+    EditText insulteeText;
     TextView generate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
+        // Check if online before anything is done
         if (isOnline()) {
-            nameText = (EditText) findViewById(R.id.name_edit_text);
-            generate = (TextView) findViewById(R.id.generate);
+            // Get Insults from server
+            getInsults();
+
+            // Instructions for app
             showDialog();
+
+            // Instantiate the Views for activity
+            instantiateViews();
         } else {
             Log.e(TAG, "not online");
             // Creates snackbar and displays it
@@ -71,12 +85,20 @@ public class MainActivity extends AppCompatActivity {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
+    /**
+     * Shows the Instructions Dialog Box
+     */
     private void showDialog() {
         DialogFragment dialogBox = new InstructionsDialogBox();
         dialogBox.show(getFragmentManager(), "InstructionsDialogBox");
     }
 
 
+    /**
+     * Creates and shows the Snackbar
+     * that displays the message when internet is out
+     * Also creates the action to dismiss it
+     */
     private void createAndShowSnackbar() {
         View rootView = findViewById(R.id.main_layout);
         snackbar = Snackbar.make(rootView,
@@ -91,5 +113,69 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
         snackbar.show();
+    }
+
+    /**
+     * Sets onClickListener for button that
+     * will make API Cal to generate the insult
+     * Performs necessary input validation so that API
+     * Call is valid
+     * Determines what Arrays to utilize and based on whats in the EditTexts
+     */
+    private void setOnClickListener(){
+        generate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, nameText.getText().toString());
+                Log.d(TAG, insulteeText.getText().toString());
+
+                if (nameText.getText().toString().trim().length() <= 0) {
+
+                }
+            }
+        });
+    }
+
+    /**
+     * Instantiates all views created in XML file and calls
+     * setOnClickListner()
+     */
+    private void instantiateViews(){
+        nameText = (EditText) findViewById(R.id.name_edit_text);
+        generate = (TextView) findViewById(R.id.generate);
+        insulteeText = (EditText) findViewById(R.id.insultee);
+        setOnClickListener();
+    }
+
+    /**
+     * Displays the acivtity's layout and
+     * set the action bar
+     */
+    private void setLayout(){
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+    }
+
+    /**
+     * Makes API call to backend to retrieve the various choices of
+     * Insults available in the FOAAS API
+     */
+    private void getInsults(){
+        JsonObjectRequest request = new JsonObjectRequest
+                (Request.Method.GET, Constants.INSULTS_NAME, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        // when request is complete, display content for app
+                        setLayout();
+                    }
+                },  new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+        });
+        APICaller.getInstance(this).addToRequestQueue(request);
     }
 }
