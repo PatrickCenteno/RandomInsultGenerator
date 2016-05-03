@@ -32,9 +32,9 @@
         android:text="Generate!"
         android:id="@+id/generate"
         android:padding="15dp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:background="?attr/selectableItemBackground"/>
+        android:background="?attr/selectableItemBackground"
+        android:layout_below="@+id/insultee"
+        android:layout_centerHorizontal="true" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -42,9 +42,25 @@
         android:inputType="textPersonName"
         android:ems="10"
         android:id="@+id/insultee"
-        android:layout_above="@+id/generate"
-        android:layout_alignStart="@+id/name_edit_text"
-        android:layout_marginBottom="47dp"
-        android:hint="Person you&apos;re Insulting" />
+        android:hint="Person you&apos;re Insulting"
+        android:layout_below="@+id/name_edit_text"
+        android:layout_alignStart="@+id/name_edit_text" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/github_img"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/github" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Click here to see source code"
+        android:id="@+id/click_to_see_src"
+        android:layout_below="@+id/github_img"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

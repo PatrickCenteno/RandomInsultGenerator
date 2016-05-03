@@ -3,8 +3,10 @@ package io.centeno.randominsultgenerator;
 import android.app.DialogFragment;
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -16,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +32,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URI;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     EditText nameText;
     EditText insulteeText;
     TextView generate;
+    TextView clickToSee;
+    ImageView github;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,8 +150,12 @@ public class MainActivity extends AppCompatActivity {
      * Performs necessary input validation so that API
      * Call is valid
      * Determines what Arrays to utilize and based on whats in the EditTexts
+     * Also sets click listener for github image and text underneath to link
+     * to source code of app
      */
     private void setOnClickListener(){
+
+        // generate button
         generate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,6 +170,8 @@ public class MainActivity extends AppCompatActivity {
                         String foassUrl = Constants.FOAAS + "/"
                                 + withNoName[val] +
                                 "/" + nameText.getText();
+
+                        hitFoaas(foassUrl);
                     }else{
 
                         // Name of insultee given, randomly select from withName
@@ -168,11 +180,32 @@ public class MainActivity extends AppCompatActivity {
                                 withName[val] + "/" +
                                 insulteeText.getText() + "/" +
                                 nameText.getText();
+                        hitFoaas(foassUrl);
                     }
                 }else{
                     // No text was entered
                     Toast.makeText(getApplicationContext(), "Please enter your name", Toast.LENGTH_LONG).show();
                 }
+            }
+        });
+
+        // Github Icon
+        github.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent webIntent = new Intent(Intent.ACTION_VIEW);
+                webIntent.setData(Uri.parse(Constants.SOURCE));
+                startActivity(webIntent);
+            }
+        });
+
+        // CLick to see text
+        clickToSee.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent webIntent = new Intent(Intent.ACTION_VIEW);
+                webIntent.setData(Uri.parse(Constants.SOURCE));
+                startActivity(webIntent);
             }
         });
     }
@@ -185,6 +218,8 @@ public class MainActivity extends AppCompatActivity {
         nameText = (EditText) findViewById(R.id.name_edit_text);
         generate = (TextView) findViewById(R.id.generate);
         insulteeText = (EditText) findViewById(R.id.insultee);
+        clickToSee = (TextView) findViewById(R.id.click_to_see_src);
+        github = (ImageView) findViewById(R.id.github_img);
         setOnClickListener();
     }
 
@@ -268,5 +303,20 @@ public class MainActivity extends AppCompatActivity {
             }
             return temp;
         }else   return null;
+    }
+
+    private void hitFoaas(String url){
+        JsonObjectRequest foaasRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(TAG, response.toString());
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d(TAG, error.toString());
+                    }
+                });
     }
 }
