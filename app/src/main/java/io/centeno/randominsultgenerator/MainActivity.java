@@ -17,13 +17,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,9 +53,6 @@ public class MainActivity extends AppCompatActivity {
 
             // Instructions for app
             showDialog();
-
-            // Instantiate the Views for activity
-            instantiateViews();
         } else {
             Log.e(TAG, "not online");
             // Creates snackbar and displays it
@@ -71,6 +74,26 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     /**
@@ -129,8 +152,27 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, nameText.getText().toString());
                 Log.d(TAG, insulteeText.getText().toString());
 
-                if (nameText.getText().toString().trim().length() <= 0) {
+                if (nameText.getText().toString().trim().length() > 0) {
+                    if (insulteeText.getText().toString().trim().length() == 0){
 
+                        // No text insultee name give. Randomly select from withNoName
+                        int val = (int)(Math.random() * (withNoName.length - 1));
+                        String endpoint = withNoName[val];
+                        String foassUrl = Constants.FOAAS + "/" + endpoint + "/" + nameText.getText();
+                        Toast.makeText(getApplicationContext(), foassUrl, Toast.LENGTH_LONG).show();
+                    }else{
+
+                        // Name of insultee given, randomly select from withName
+                        int val = (int)(Math.random() * (withName.length -1));
+                        String endpoint = withName[val];
+                        String foassUrl = Constants.FOAAS + "/" + endpoint + "/" +
+                                insulteeText.getText() + "/" +
+                                nameText.getText();
+                        Toast.makeText(getApplicationContext(), foassUrl, Toast.LENGTH_LONG).show();
+                    }
+                }else{
+                    // No text was entered
+                    Toast.makeText(getApplicationContext(), "Please enter your name", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -162,20 +204,69 @@ public class MainActivity extends AppCompatActivity {
      * Insults available in the FOAAS API
      */
     private void getInsults(){
-        JsonObjectRequest request = new JsonObjectRequest
-                (Request.Method.GET, Constants.INSULTS_NAME, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
 
-                        // when request is complete, display content for app
-                        setLayout();
+        // Getting withName array
+        JsonArrayRequest request = new JsonArrayRequest
+                (Request.Method.GET, Constants.INSULTS_NAME, null, new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d(TAG, response.toString());
+                        if (response.length() > 0){
+                            // not sure if this is needed
+                            withName = new String[response.length()];
+                            withName = getArrayFromJson(response, response.length());
+                            for (String s : withName){
+                                Log.d(TAG, "in for loop " + s);
+                            }
+                        }
+
                     }
                 },  new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        Log.e(TAG, error.toString());
                     }
         });
+
+        // Getting withNoName array
+        JsonArrayRequest request2 = new JsonArrayRequest
+                (Request.Method.GET, Constants.INSULTS_NO_NAME, null, new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d(TAG, response.toString());
+                        if (response.length() > 0){
+                            withNoName = new String[response.length()];
+                            withNoName = getArrayFromJson(response, response.length());
+                            for (String s : withNoName){
+                                Log.d(TAG, "in for loop " + s);
+                            }
+                        }
+                        // when request is complete, display content for app
+                        setLayout();
+                        // Instantiate the Views for activity
+                        instantiateViews();
+                    }
+                },  new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, error.toString());
+                    }
+                });
         APICaller.getInstance(this).addToRequestQueue(request);
+        APICaller.getInstance(this).addToRequestQueue(request2);
+    }
+
+    private String[] getArrayFromJson (JSONArray array, int length){
+        if (length > 0) {
+            String[] temp = new String[length];
+            for (int i = 0; i < array.length(); i++) {
+                try {
+                    temp[i] = array.get(i).toString();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return temp;
+        }else   return null;
     }
 }
