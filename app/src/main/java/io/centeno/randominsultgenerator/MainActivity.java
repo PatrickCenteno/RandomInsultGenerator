@@ -318,5 +318,6 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, error.toString());
                     }
                 });
+        APICaller.getInstance(this).addToRequestQueue(foaasRequest);
     }
 }
