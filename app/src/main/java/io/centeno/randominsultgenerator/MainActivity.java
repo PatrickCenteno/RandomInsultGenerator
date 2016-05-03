@@ -157,18 +157,17 @@ public class MainActivity extends AppCompatActivity {
 
                         // No text insultee name give. Randomly select from withNoName
                         int val = (int)(Math.random() * (withNoName.length - 1));
-                        String endpoint = withNoName[val];
-                        String foassUrl = Constants.FOAAS + "/" + endpoint + "/" + nameText.getText();
-                        Toast.makeText(getApplicationContext(), foassUrl, Toast.LENGTH_LONG).show();
+                        String foassUrl = Constants.FOAAS + "/"
+                                + withNoName[val] +
+                                "/" + nameText.getText();
                     }else{
 
                         // Name of insultee given, randomly select from withName
                         int val = (int)(Math.random() * (withName.length -1));
-                        String endpoint = withName[val];
-                        String foassUrl = Constants.FOAAS + "/" + endpoint + "/" +
+                        String foassUrl = Constants.FOAAS + "/" +
+                                withName[val] + "/" +
                                 insulteeText.getText() + "/" +
                                 nameText.getText();
-                        Toast.makeText(getApplicationContext(), foassUrl, Toast.LENGTH_LONG).show();
                     }
                 }else{
                     // No text was entered
@@ -196,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
     private void setLayout(){
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Random Insult Generator");
         setSupportActionBar(toolbar);
     }
 
