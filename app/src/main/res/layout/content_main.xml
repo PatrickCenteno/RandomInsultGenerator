@@ -50,9 +50,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/github_img"
-        android:layout_centerVertical="true"
+        android:src="@mipmap/github"
+        android:layout_below="@+id/generate"
         android:layout_centerHorizontal="true"
-        android:src="@mipmap/github" />
+        android:layout_marginTop="168dp" />
 
     <TextView
         android:layout_width="wrap_content"
