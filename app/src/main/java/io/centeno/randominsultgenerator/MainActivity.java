@@ -150,47 +150,53 @@ public class MainActivity extends AppCompatActivity {
      */
     private void setOnClickListener(){
 
-        // generate button
-        generate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, nameText.getText().toString());
-                Log.d(TAG, insulteeText.getText().toString());
+        if (isOnline()) {
+            // generate button
+            generate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(TAG, nameText.getText().toString());
+                    Log.d(TAG, insulteeText.getText().toString());
 
-                if (nameText.getText().toString().trim().length() > 0) {
-                    if (insulteeText.getText().toString().trim().length() == 0){
+                    if (nameText.getText().toString().trim().length() > 0) {
+                        if (insulteeText.getText().toString().trim().length() == 0) {
 
-                        // No text insultee name give. Randomly select from withNoName
-                        int val = (int)(Math.random() * (withNoName.length - 1));
-                        String foassUrl = Constants.FOAAS + "/"
-                                + withNoName[val] +
-                                "/" + nameText.getText();
+                            // No text insultee name give. Randomly select from withNoName
+                            int val = (int) (Math.random() * (withNoName.length - 1));
+                            String foassUrl = Constants.FOAAS + "/"
+                                    + withNoName[val] +
+                                    "/" + nameText.getText();
 
-                        hitFoaas(foassUrl);
-                    }else{
+                            hitFoaas(foassUrl);
+                        } else {
 
-                        // Name of insultee given, randomly select from withName
-                        int val = (int)(Math.random() * (withName.length -1));
-                        String foassUrl = Constants.FOAAS + "/" +
-                                withName[val] + "/" +
-                                insulteeText.getText() + "/" +
-                                nameText.getText();
-                        hitFoaas(foassUrl);
+                            // Name of insultee given, randomly select from withName
+                            int val = (int) (Math.random() * (withName.length - 1));
+                            String foassUrl = Constants.FOAAS + "/" +
+                                    withName[val] + "/" +
+                                    insulteeText.getText() + "/" +
+                                    nameText.getText();
+                            hitFoaas(foassUrl);
+                        }
+                    } else {
+                        // No text was entered
+                        Toast.makeText(getApplicationContext(), "Please enter your name", Toast.LENGTH_LONG).show();
                     }
-                }else{
-                    // No text was entered
-                    Toast.makeText(getApplicationContext(), "Please enter your name", Toast.LENGTH_LONG).show();
                 }
-            }
-        });
+            });
+        }else
+            createAndShowSnackbar();
 
         // Github Icon
         github.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent webIntent = new Intent(Intent.ACTION_VIEW);
-                webIntent.setData(Uri.parse(Constants.SOURCE));
-                startActivity(webIntent);
+                if (isOnline()) {
+                    Intent webIntent = new Intent(Intent.ACTION_VIEW);
+                    webIntent.setData(Uri.parse(Constants.SOURCE));
+                    startActivity(webIntent);
+                }else
+                    createAndShowSnackbar();
             }
         });
 
@@ -198,9 +204,12 @@ public class MainActivity extends AppCompatActivity {
         clickToSee.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent webIntent = new Intent(Intent.ACTION_VIEW);
-                webIntent.setData(Uri.parse(Constants.SOURCE));
-                startActivity(webIntent);
+                if(isOnline()) {
+                    Intent webIntent = new Intent(Intent.ACTION_VIEW);
+                    webIntent.setData(Uri.parse(Constants.SOURCE));
+                    startActivity(webIntent);
+                }else
+                    createAndShowSnackbar();
             }
         });
     }
@@ -306,6 +315,15 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.d(TAG, response);
+                        HTMLParser parser = HTMLParser.getParser(getApplicationContext(), "<title>", "</title>", response);
+                        try {
+                            Log.d(TAG, "title text: " + parser.getParsedText());
+                            Intent intent = new Intent(getApplicationContext(), InsultDisplay.class);
+                            intent.putExtra("insult", parser.getParsedText());
+                            startActivity(intent);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                     }
                 }, new Response.ErrorListener(){
                     @Override
