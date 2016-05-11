@@ -15,7 +15,8 @@ public class InstructionsDialogBox extends DialogFragment {
             "- Enter your name in the first text box",
             "- To make your insult personal, enter the name of the person getting insulted in the second text box (optional)",
             "- Click generate to see your new insult!",
-            "- Share with your friends! (or enemies)"
+            "- Share with your friends! (or enemies)",
+            "- Powered by www.foaas.com"
     };
 
     @Override
