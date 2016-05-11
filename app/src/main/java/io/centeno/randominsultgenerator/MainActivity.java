@@ -89,13 +89,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onRestart() {
+        if (isOnline())
+            getInsults();
         super.onRestart();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
 
     /**
      * Checks if internet connection is present
