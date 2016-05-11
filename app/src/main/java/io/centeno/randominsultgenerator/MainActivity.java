@@ -241,6 +241,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Makes API call to backend to retrieve the various choices of
      * Insults available in the FOAAS API
+     * When request is complete, it instantiate the views for the activity
      */
     private void getInsults(){
 
@@ -295,6 +296,14 @@ public class MainActivity extends AppCompatActivity {
         APICaller.getInstance(this).addToRequestQueue(request2);
     }
 
+
+    /**
+     *
+     * @param array
+     * @param length
+     * Takes a json respons array and converts it to a String array
+     * @return String []
+     */
     private String[] getArrayFromJson (JSONArray array, int length){
         if (length > 0) {
             String[] temp = new String[length];
@@ -309,6 +318,15 @@ public class MainActivity extends AppCompatActivity {
         }else   return null;
     }
 
+
+    /**
+     *
+     * @param url
+     * Makes request ot the Foaas api to retreive
+     * the insult. Parses the html response of the
+     * Foaas api to retreive the plain text insult.
+     * Sends insult to next activity using intent extra
+     */
     private void hitFoaas(String url){
         StringRequest foaasRequest = new StringRequest
                 (Request.Method.GET, url, new Response.Listener<String>() {

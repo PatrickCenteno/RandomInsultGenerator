@@ -31,9 +31,14 @@ public class InsultDisplay extends AppCompatActivity {
 
         insultDisplay = (TextView) findViewById(R.id.insult_display_text);
         insultDisplay.setText(insult);
-
     }
 
+    /**
+     *
+     * @param v
+     * Called when floating action button is clicked
+     * Allows user to share their insult by medium of their choice.
+     */
     public void shareInsult(View v){
         // When floating action button is clicked
         Log.d(TAG, "shareInsult called ");
