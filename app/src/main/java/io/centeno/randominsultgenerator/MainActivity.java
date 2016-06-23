@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         // Check if online before anything is done
         if (isOnline()) {
@@ -231,7 +232,6 @@ public class MainActivity extends AppCompatActivity {
      * set the action bar
      */
     private void setLayout(){
-        setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Random Insult Generator");
         setSupportActionBar(toolbar);
