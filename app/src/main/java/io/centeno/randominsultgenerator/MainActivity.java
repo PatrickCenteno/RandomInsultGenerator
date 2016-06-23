@@ -165,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
                                     + withNoName[val] +
                                     "/" + nameText.getText();
 
+
                             hitFoaas(foassUrl);
                         } else {
 
@@ -262,6 +263,7 @@ public class MainActivity extends AppCompatActivity {
                 },  new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+
                         Log.e(TAG, error.toString());
                     }
         });
@@ -331,7 +333,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.d(TAG, response);
-                        HTMLParser parser = HTMLParser.getParser(getApplicationContext(), "<title>", "</title>", response);
+                        HTMLParser parser = HTMLParser.getParser(getApplicationContext(), "<title>", "</title>");
+                        parser.setHtml(response);
                         try {
                             Log.d(TAG, "title text: " + parser.getParsedText());
                             Intent intent = new Intent(getApplicationContext(), InsultDisplay.class);

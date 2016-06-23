@@ -17,18 +17,17 @@ public class HTMLParser {
 
     // Constructor for finding two html tags
     private HTMLParser(Context context,
-                       String tag1, String tag2, String html){
+                       String tag1, String tag2){
         this.context = context;
         this.tag1 = tag1;
         this.tag2 = tag2;
-        this.html = html;
     }
 
     // Get singularity of HTMLParser
     public static synchronized HTMLParser getParser(Context context,
-                                         String tag1, String tag2, String html){
+                                         String tag1, String tag2){
         if (instance == null)
-            instance = new HTMLParser(context, tag1, tag2, html);
+            instance = new HTMLParser(context, tag1, tag2);
         return instance;
     }
 
@@ -73,5 +72,9 @@ public class HTMLParser {
     private String trimParsedText(CharSequence text){
         int charMinus = tag1.length() + CHARS_TO_BURN;
         return text.toString().substring(charMinus - 1);
+    }
+
+    public void setHtml(String html) {
+        this.html = html;
     }
 }
