@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private String [] withName;
     private String [] withNoName;
 
+    boolean hasInsults = false;
+
     Snackbar snackbar;
     EditText nameText;
     EditText insulteeText;
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        instantiateViews();
 
         // Check if online before anything is done
         if (isOnline()) {
@@ -126,15 +129,9 @@ public class MainActivity extends AppCompatActivity {
         View rootView = findViewById(R.id.main_layout);
         snackbar = Snackbar.make(rootView,
                 "Oops! Please check your Internet Connection",
-                Snackbar.LENGTH_INDEFINITE)
+                Snackbar.LENGTH_LONG)
 
-                .setActionTextColor(getResources().getColor(R.color.white))
-                .setAction("Dismiss", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        snackbar.dismiss();
-                    }
-                });
+                .setActionTextColor(getResources().getColor(R.color.white));
         snackbar.show();
     }
 
@@ -148,45 +145,6 @@ public class MainActivity extends AppCompatActivity {
      * to source code of app
      */
     private void setOnClickListener(){
-
-        if (isOnline()) {
-            // generate button
-            generate.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.d(TAG, nameText.getText().toString());
-                    Log.d(TAG, insulteeText.getText().toString());
-
-                    if (nameText.getText().toString().trim().length() > 0) {
-                        if (insulteeText.getText().toString().trim().length() == 0) {
-
-                            // No text insultee name give. Randomly select from withNoName
-                            int val = (int) (Math.random() * (withNoName.length - 1));
-                            String foassUrl = Constants.FOAAS + "/"
-                                    + withNoName[val] +
-                                    "/" + nameText.getText();
-
-
-                            hitFoaas(foassUrl);
-                        } else {
-
-                            // Name of insultee given, randomly select from withName
-                            int val = (int) (Math.random() * (withName.length - 1));
-                            String foassUrl = Constants.FOAAS + "/" +
-                                    withName[val] + "/" +
-                                    insulteeText.getText() + "/" +
-                                    nameText.getText();
-                            hitFoaas(foassUrl);
-                        }
-                    } else {
-                        // No text was entered
-                        Toast.makeText(getApplicationContext(), "Please enter your name", Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
-        }else
-            createAndShowSnackbar();
-
         // Github Icon
         github.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                     Intent webIntent = new Intent(Intent.ACTION_VIEW);
                     webIntent.setData(Uri.parse(Constants.SOURCE));
                     startActivity(webIntent);
-                }else
+                } else
                     createAndShowSnackbar();
             }
         });
@@ -204,11 +162,11 @@ public class MainActivity extends AppCompatActivity {
         clickToSee.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isOnline()) {
+                if (isOnline()) {
                     Intent webIntent = new Intent(Intent.ACTION_VIEW);
                     webIntent.setData(Uri.parse(Constants.SOURCE));
                     startActivity(webIntent);
-                }else
+                } else
                     createAndShowSnackbar();
             }
         });
@@ -225,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
         clickToSee = (TextView) findViewById(R.id.click_to_see_src);
         github = (ImageView) findViewById(R.id.github_img);
         setOnClickListener();
+        setGenerateButton();
     }
 
     /**
@@ -283,8 +242,9 @@ public class MainActivity extends AppCompatActivity {
                         }
                         // when request is complete, display content for app
                         setLayout();
-                        // Instantiate the Views for activity
-                        instantiateViews();
+                        if(!hasInsults)
+                            generateEndpoint();
+                        hasInsults = true;
                     }
                 },  new Response.ErrorListener() {
                     @Override
@@ -294,6 +254,7 @@ public class MainActivity extends AppCompatActivity {
                 });
         APICaller.getInstance(this).addToRequestQueue(request);
         APICaller.getInstance(this).addToRequestQueue(request2);
+
     }
 
 
@@ -316,6 +277,62 @@ public class MainActivity extends AppCompatActivity {
             }
             return temp;
         }else   return null;
+    }
+
+    /**
+     * Set Click listener for generate Button
+     */
+    private void setGenerateButton(){
+        generate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isOnline()) {
+                    if (hasInsults) {
+                      generateEndpoint();
+                    }
+                    else {
+                        getInsults();
+                    }
+                }else{
+                    Log.e(TAG, "Not online");
+                    createAndShowSnackbar();
+                }
+            }
+        });
+    }
+
+    /**
+     * Generates endpoint for FOAAS API
+     */
+    private void generateEndpoint(){
+        Log.d(TAG, nameText.getText().toString());
+        Log.d(TAG, insulteeText.getText().toString());
+
+        if (nameText.getText().toString().trim().length() > 0) {
+            if (insulteeText.getText().toString().trim().length() == 0) {
+
+                // No text insultee name give. Randomly select from withNoName
+                int val = (int) (Math.random() * (withNoName.length - 1));
+                String foassUrl = Constants.FOAAS + "/"
+                        + withNoName[val] +
+                        "/" + nameText.getText();
+
+
+                hitFoaas(foassUrl);
+            } else {
+
+                // Name of insultee given, randomly select from withName
+                int val = (int) (Math.random() * (withName.length - 1));
+                String foassUrl = Constants.FOAAS + "/" +
+                        withName[val] + "/" +
+                        insulteeText.getText() + "/" +
+                        nameText.getText();
+                hitFoaas(foassUrl);
+            }
+        } else {
+            // No text was entered
+            Toast.makeText(getApplicationContext(), "Please enter your name", Toast.LENGTH_LONG).show();
+        }
     }
 
 
